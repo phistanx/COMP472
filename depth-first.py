@@ -44,9 +44,9 @@ def DFS():
 
 
 def findChildren(current_node, open_stack, closed_stack):
-    for i in range(len(current_node)):
-        for j in range(len(current_node)):
-            temp_node = copy.deepcopy(current_node)
+    for i in range(len(current_node.state)):
+        for j in range(len(current_node.state)):
+            temp_node = copy.deepcopy(current_node.state)
             if temp_node[i][j] == 1:
                 temp_node[i][j] = 0
             else:
@@ -89,7 +89,7 @@ def findChildren(current_node, open_stack, closed_stack):
                 print("")
             print(temp_node)
             if temp_node not in closed_stack:
-                open_stack.append(temp_node)
+                open_stack.append(Node(temp_node, current_node.depth+1))
 
 
 # print(create_boards())
@@ -98,7 +98,7 @@ initial_node = Node(initial_board, 0)
 open_stack = []
 closed_stack = []
 max_d = 2
-open_stack.append(initial_board)
+open_stack.append(initial_node)
 
 current_node = open_stack.pop()
 closed_stack.append(current_node)
