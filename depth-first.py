@@ -1,3 +1,14 @@
+import copy
+
+
+class Node:
+    state: []
+    depth: int
+
+    def __init__(self, state, depth):
+        self.state = state
+        self.depth = depth
+
 def create_boards():
     f = open("input-text/initial.txt", "r")
     contents = f.read()
@@ -32,61 +43,77 @@ def DFS():
     closed_list = []
 
 
-print(create_boards())
+def findChildren(current_node, open_stack, closed_stack):
+    for i in range(len(current_node)):
+        for j in range(len(current_node)):
+            temp_node = copy.deepcopy(current_node)
+            if temp_node[i][j] == 1:
+                temp_node[i][j] = 0
+            else:
+                temp_node[i][j] = 1
+            try:
+                if temp_node[i + 1][j] == 1:
+                    temp_node[i + 1][j] = 0
+                else:
+                    temp_node[i + 1][j] = 1
+            except:
+                print("")
+
+            try:
+                if i - 1 < 0:
+                    raise Exception('A very specific bad thing happened.')
+                if temp_node[i - 1][j] == 1:
+                    temp_node[i - 1][j] = 0
+                else:
+                    temp_node[i - 1][j] = 1
+            except:
+                print("")
+
+            try:
+                if temp_node[i][j + 1] == 1:
+                    temp_node[i][j + 1] = 0
+                else:
+                    temp_node[i][j + 1] = 1
+
+            except:
+                print("")
+
+            try:
+                if j - 1 < 0:
+                    raise Exception('A very specific bad thing happened.')
+                if temp_node[i][j - 1] == 1:
+                    temp_node[i][j - 1] = 0
+                else:
+                    temp_node[i][j - 1] = 1
+            except:
+                print("")
+            print(temp_node)
+            if temp_node not in closed_stack:
+                open_stack.append(temp_node)
+
+
+# print(create_boards())
 initial_board = create_boards()
+initial_node = Node(initial_board, 0)
 open_stack = []
+closed_stack = []
+max_d = 2
 open_stack.append(initial_board)
 
 current_node = open_stack.pop()
+closed_stack.append(current_node)
 
-# for i in range(len(current_node)):
-#     for j in range(len(current_node)):
+findChildren(current_node, open_stack, closed_stack)
+print(open_stack)
 
-# for i in range(1):
-#     for j in range(1):
-for i in range(len(current_node)):
-    for j in range(len(current_node)):
-        if current_node[i][j] == 1:
-            current_node[i][j] = 0
-        else:
-            current_node[i][j] = 1
-        print(current_node)
+current_node = open_stack.pop()
+closed_stack.append(current_node)
+findChildren(current_node, open_stack, closed_stack)
+print(open_stack)
 
-        try:
-            if current_node[i + 1][j] == 1:
-                current_node[i + 1][j] = 0
-            else:
-                current_node[i + 1][j] = 1
-        except:
-            print("first if")
-
-        try:
-            if i - 1 < 0:
-                raise Exception('A very specific bad thing happened.')
-            if current_node[i - 1][j] == 1:
-                current_node[i - 1][j] = 0
-            else:
-                current_node[i - 1][j] = 1
-        except:
-             print("fourth if")
-
-        try:
-            if current_node[i][j + 1] == 1:
-                current_node[i][j + 1] = 0
-            else:
-                current_node[i][j + 1] = 1
-
-        except:
-            print("second if")
-
-        try:
-            if j - 1 < 0:
-                raise Exception('A very specific bad thing happened.')
-            if current_node[i][j - 1] == 1:
-                current_node[i][j - 1] = 0
-            else:
-                current_node[i][j - 1] = 1
-        except:
-            print("third if")
-
-        print(current_node)
+while not open_stack:
+    current_node = open_stack.pop()
+    max_d_clone = 0
+    while max_d > max_d_clone:
+        findChildren(current_node, open_stack, closed_stack)
+        max_d_clone += 1
