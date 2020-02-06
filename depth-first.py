@@ -92,7 +92,19 @@ def findChildren(current_node, open_stack, closed_stack):
             print(temp_node)
             if temp_node not in closed_stack:
                 open_stack.append(Node(temp_node, current_node.depth+1))
+            else if find_depth_in_List(temp_node, closed_stack):
+                open_stack.append(Node(temp_node, current_node.depth+1))
+                
 
+def find_depth_in_List(node,closed_list):
+    for i in range(len(closed_list))
+       if node.state == closed_list[i].state:
+           if node.depth < closed_list[i].depth:
+               closed_list[i] = node
+               return true
+    
+        
+    
 
 # print(create_boards())
 
