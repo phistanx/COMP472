@@ -95,24 +95,42 @@ def findChildren(current_node, open_stack, closed_stack):
 
 
 # print(create_boards())
+
+# get initial board
 initial_board = create_boards()
-initial_node = Node(initial_board, 0)
+
+# create Node object containing the state and the depth
+initial_node = Node(initial_board, 0, None)
+
+# initialize closed and open stack
 open_stack = []
 closed_stack = []
+
+# dummy max depth for now
 max_d = 2
+
+# adding initial node to the stack
 open_stack.append(initial_node)
 
+# popping the stack
 current_node = open_stack.pop()
+
+# adding the first pop to the closed stack
 closed_stack.append(current_node)
 
+# find the children of the current node that was popped from the open stack
 findChildren(current_node, open_stack, closed_stack)
 print(open_stack)
 
+# pop the next node at the top of the stack
 current_node = open_stack.pop()
+
+# rinse and repeat
 closed_stack.append(current_node)
 findChildren(current_node, open_stack, closed_stack)
 print(open_stack)
 
+# NEW LOGIC TO BE IMPLEMENTED WITH LOOPS
 while not open_stack:
     current_node = open_stack.pop()
     if current_node == [[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]]:
