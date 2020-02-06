@@ -6,10 +6,10 @@ class Node:
     depth: int
     parent: []
 
-    def __init__(self, state, depth):
+    def __init__(self, state, depth, parent):
         self.state = state
         self.depth = depth
-        self.parent = state
+        self.parent = parent
 
 
 def create_boards():
@@ -90,17 +90,21 @@ def findChildren(current_node, open_stack, closed_stack):
                     temp_node[i][j - 1] = 1
             except:
                 print("")
-            print(temp_node)
-            if temp_node not in closed_stack:
-                open_stack.append(Node(temp_node, current_node.depth + 1))
-            elif find_depth_in_list(temp_node, closed_stack):
-                open_stack.append(Node(temp_node, current_node.depth + 1))
+            if check_in_closed_stack(temp_node, closed_stack):
+                open_stack.append(Node(temp_node, current_node.depth + 1, current_node.state))
+            elif find_depth_in_list(temp_node, current_node.depth+1, closed_stack):
+                open_stack.append(Node(temp_node, current_node.depth + 1, current_node.state))
 
+def check_in_closed_stack(temp_node, closed_stack):
+    for i in range(len(closed_stack)):
+        if temp_node == closed_stack[i].state:
+            return False
+    return True
 
-def find_depth_in_list(node, closed_list):
+def find_depth_in_list(node, depth, closed_list):
     for i in range(len(closed_list)):
-        if node.state == closed_list[i].state:
-            if node.depth < closed_list[i].depth:
+        if node == closed_list[i].state:
+            if depth < closed_list[i].depth:
                 closed_list[i] = node
                 return True
 
@@ -118,38 +122,45 @@ open_stack = []
 closed_stack = []
 
 # dummy max depth for now
-max_d = 2
+max_d = 4
 
 # adding initial node to the stack
 open_stack.append(initial_node)
 
 # popping the stack
-current_node = open_stack.pop()
+# current_node = open_stack.pop()
 
 # adding the first pop to the closed stack
-closed_stack.append(current_node)
+# closed_stack.append(current_node)
 
 # find the children of the current node that was popped from the open stack
-findChildren(current_node, open_stack, closed_stack)
-print(open_stack)
+# findChildren(current_node, open_stack, closed_stack)
+# print(open_stack)
 
 # pop the next node at the top of the stack
-current_node = open_stack.pop()
+# current_node = open_stack.pop()
 
 # rinse and repeat
-closed_stack.append(current_node)
-findChildren(current_node, open_stack, closed_stack)
-print(open_stack)
+# closed_stack.append(current_node)
+# findChildren(current_node, open_stack, closed_stack)
+# print(open_stack)
 
 # NEW LOGIC TO BE IMPLEMENTED WITH LOOPS
-while not open_stack:
+while len(open_stack) > 0:
     current_node = open_stack.pop()
-    if current_node == [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]:
+    closed_stack.append(current_node)
+    print(current_node.state)
+    if current_node.state == [[0, 0], [0, 0]]:
         print("break")
-        print(current_node)
+        print(current_node.state)
         break
 
     while max_d > current_node.depth:
         findChildren(current_node, open_stack, closed_stack)
+        if len(open_stack) == 0:
+            break
+        current_node = open_stack.pop()
+        closed_stack.append(current_node)
+        print(current_node.state)
 
-print("DOne")
+print("D0ne")
