@@ -4,7 +4,7 @@ import copy
 class Node:
     state: []
     depth: int
-    parent: []
+    parent: None
 
     def __init__(self, state, depth, parent):
         self.state = state
@@ -91,9 +91,9 @@ def findChildren(current_node, open_stack, closed_stack):
             except:
                 print("")
             if check_in_closed_stack(temp_node, closed_stack):
-                open_stack.append(Node(temp_node, current_node.depth + 1, current_node.state))
+                open_stack.append(Node(temp_node, current_node.depth + 1, current_node))
             elif find_depth_in_list(temp_node, current_node.depth+1, closed_stack):
-                open_stack.append(Node(temp_node, current_node.depth + 1, current_node.state))
+                open_stack.append(Node(temp_node, current_node.depth + 1, current_node))
 
 def check_in_closed_stack(temp_node, closed_stack):
     for i in range(len(closed_stack)):
@@ -102,11 +102,15 @@ def check_in_closed_stack(temp_node, closed_stack):
     return True
 
 def find_depth_in_list(node, depth, closed_list):
-    for i in range(len(closed_list)):
-        if node == closed_list[i].state:
-            if depth < closed_list[i].depth:
-                closed_list[i] = node
-                return True
+    try:
+        for i in range(len(closed_list)):
+            if node == closed_list[i].state:
+                if depth < closed_list[i].depth:
+                    closed_list[i].state = node
+                    closed_list[i].depth = depth
+                    return True
+    except:
+        print('bruh')
 
 
 # print(create_boards())
@@ -150,7 +154,7 @@ while len(open_stack) > 0:
     current_node = open_stack.pop()
     closed_stack.append(current_node)
     print(current_node.state)
-    if current_node.state == [[0, 0], [0, 0]]:
+    if current_node.state == [[0, 0, 0],[0, 0, 0],[0, 0, 0]]:
         print("break")
         print(current_node.state)
         break
@@ -160,7 +164,14 @@ while len(open_stack) > 0:
         if len(open_stack) == 0:
             break
         current_node = open_stack.pop()
+        if current_node.state == [[0, 0, 0], [0, 0, 0], [0, 0, 0]]:
+            break
         closed_stack.append(current_node)
         print(current_node.state)
+
+    if current_node.state == [[0, 0, 0], [0, 0, 0], [0, 0, 0]]:
+        print("break")
+        print(current_node.state)
+        break
 
 print("D0ne")
