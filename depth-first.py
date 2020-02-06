@@ -11,6 +11,7 @@ class Node:
         self.depth = depth
         self.parent = state
 
+
 def create_boards():
     f = open("input-text/initial.txt", "r")
     contents = f.read()
@@ -91,20 +92,18 @@ def findChildren(current_node, open_stack, closed_stack):
                 print("")
             print(temp_node)
             if temp_node not in closed_stack:
-                open_stack.append(Node(temp_node, current_node.depth+1))
-            else if find_depth_in_List(temp_node, closed_stack):
-                open_stack.append(Node(temp_node, current_node.depth+1))
-                
+                open_stack.append(Node(temp_node, current_node.depth + 1))
+            elif find_depth_in_list(temp_node, closed_stack):
+                open_stack.append(Node(temp_node, current_node.depth + 1))
 
-def find_depth_in_List(node,closed_list):
-    for i in range(len(closed_list))
-       if node.state == closed_list[i].state:
-           if node.depth < closed_list[i].depth:
-               closed_list[i] = node
-               return true
-    
-        
-    
+
+def find_depth_in_list(node, closed_list):
+    for i in range(len(closed_list)):
+        if node.state == closed_list[i].state:
+            if node.depth < closed_list[i].depth:
+                closed_list[i] = node
+                return True
+
 
 # print(create_boards())
 
@@ -145,7 +144,7 @@ print(open_stack)
 # NEW LOGIC TO BE IMPLEMENTED WITH LOOPS
 while not open_stack:
     current_node = open_stack.pop()
-    if current_node == [[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]]:
+    if current_node == [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]:
         print("break")
         print(current_node)
         break
