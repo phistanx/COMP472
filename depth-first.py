@@ -4,10 +4,12 @@ import copy
 class Node:
     state: []
     depth: int
+    parent: []
 
     def __init__(self, state, depth):
         self.state = state
         self.depth = depth
+        self.parent = state
 
 def create_boards():
     f = open("input-text/initial.txt", "r")
@@ -113,7 +115,12 @@ print(open_stack)
 
 while not open_stack:
     current_node = open_stack.pop()
-    max_d_clone = 0
-    while max_d > max_d_clone:
+    if current_node == [[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]]:
+        print("break")
+        print(current_node)
+        break
+
+    while max_d > current_node.depth:
         findChildren(current_node, open_stack, closed_stack)
-        max_d_clone += 1
+
+print("DOne")
