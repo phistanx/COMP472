@@ -1,4 +1,6 @@
 import copy
+import pickle
+import ujson
 
 
 class Node:
@@ -72,7 +74,8 @@ def findChildren(current_node, open_stack, closed_stack):
     actual_temp_nodes = []
     for i in range(len(current_node.state)):
         for j in range(len(current_node.state)):
-            temp_node = copy.deepcopy(current_node.state)
+            # temp_node = pickle.loads(pickle.dumps(current_node.state, -1))
+            temp_node = ujson.loads(ujson.dumps(current_node.state))
             if temp_node[i][j] == 1:
                 temp_node[i][j] = 0
             else:
@@ -124,8 +127,8 @@ def findChildren(current_node, open_stack, closed_stack):
     for node in temp_list:
         if check_in_closed_stack(node.state, closed_stack):
             open_stack.append(node)
-        elif find_depth_in_list(node.state, current_node.depth + 1, closed_stack):
-            open_stack.append(node)
+        # elif find_depth_in_list(node.state, current_node.depth + 1, closed_stack):
+        #     open_stack.append(node)
 
 
 def check_in_closed_stack(state, closed_stack):
