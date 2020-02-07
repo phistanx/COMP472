@@ -126,7 +126,7 @@ open_stack = []
 closed_stack = []
 
 # dummy max depth for now
-max_d = 4
+max_d = 9
 
 # adding initial node to the stack
 open_stack.append(initial_node)
