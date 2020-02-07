@@ -11,6 +11,11 @@ class Node:
         self.depth = depth
         self.parent = parent
 
+def get_maxd():
+    f = open("input-text/initial.txt", "r")
+    contents = f.read()
+    x = contents.split()
+    return int(x[1])
 
 def create_boards():
     f = open("input-text/initial.txt", "r")
@@ -60,7 +65,7 @@ def findChildren(current_node, open_stack, closed_stack):
                 else:
                     temp_node[i + 1][j] = 1
             except:
-                print("")
+                print(end = '')
 
             try:
                 if i - 1 < 0:
@@ -70,7 +75,7 @@ def findChildren(current_node, open_stack, closed_stack):
                 else:
                     temp_node[i - 1][j] = 1
             except:
-                print("")
+                print(end = '')
 
             try:
                 if temp_node[i][j + 1] == 1:
@@ -79,7 +84,7 @@ def findChildren(current_node, open_stack, closed_stack):
                     temp_node[i][j + 1] = 1
 
             except:
-                print("")
+                print(end = '')
 
             try:
                 if j - 1 < 0:
@@ -89,7 +94,7 @@ def findChildren(current_node, open_stack, closed_stack):
                 else:
                     temp_node[i][j - 1] = 1
             except:
-                print("")
+                print(end = '')
             if check_in_closed_stack(temp_node, closed_stack):
                 open_stack.append(Node(temp_node, current_node.depth + 1, current_node))
             elif find_depth_in_list(temp_node, current_node.depth+1, closed_stack):
@@ -119,14 +124,14 @@ def find_depth_in_list(node, depth, closed_list):
 initial_board = create_boards()
 
 # create Node object containing the state and the depth
-initial_node = Node(initial_board, 0, None)
+initial_node = Node(initial_board, 1, None)
 
 # initialize closed and open stack
 open_stack = []
 closed_stack = []
 
 # dummy max depth for now
-max_d = 9
+max_d = get_maxd()
 
 # adding initial node to the stack
 open_stack.append(initial_node)
@@ -150,11 +155,15 @@ open_stack.append(initial_node)
 # print(open_stack)
 
 # NEW LOGIC TO BE IMPLEMENTED WITH LOOPS
+
+no_solution = True
+
 while len(open_stack) > 0:
     current_node = open_stack.pop()
     closed_stack.append(current_node)
     print(current_node.state)
-    if current_node.state == [[0, 0, 0],[0, 0, 0],[0, 0, 0]]:
+    if success(current_node.state):
+        no_solution = False
         print("break")
         print(current_node.state)
         break
@@ -164,14 +173,18 @@ while len(open_stack) > 0:
         if len(open_stack) == 0:
             break
         current_node = open_stack.pop()
-        if current_node.state == [[0, 0, 0], [0, 0, 0], [0, 0, 0]]:
+        if success(current_node.state):
+            no_solution = False
             break
         closed_stack.append(current_node)
         print(current_node.state)
 
-    if current_node.state == [[0, 0, 0], [0, 0, 0], [0, 0, 0]]:
+    if success(current_node.state):
+        no_solution = False
         print("break")
         print(current_node.state)
         break
 
+if no_solution:
+    print("NO SOLUTION")
 print("D0ne")
