@@ -5,17 +5,21 @@ class Node:
     state: []
     depth: int
     parent: None
+    coordinates: None
 
-    def __init__(self, state, depth, parent):
+    def __init__(self, state, depth, parent, coordinates):
         self.state = state
         self.depth = depth
         self.parent = parent
+        self.coordinates = coordinates
+
 
 def get_maxd():
     f = open("input-text/initial.txt", "r")
     contents = f.read()
     x = contents.split()
     return int(x[1])
+
 
 def create_boards():
     f = open("input-text/initial.txt", "r")
@@ -53,6 +57,7 @@ def DFS():
 
 def findChildren(current_node, open_stack, closed_stack):
     temp_list = []
+    actual_temp_nodes = []
     for i in range(len(current_node.state)):
         for j in range(len(current_node.state)):
             temp_node = copy.deepcopy(current_node.state)
@@ -66,7 +71,7 @@ def findChildren(current_node, open_stack, closed_stack):
                 else:
                     temp_node[i + 1][j] = 1
             except:
-                print(end = '')
+                print(end='')
 
             try:
                 if i - 1 < 0:
@@ -76,7 +81,7 @@ def findChildren(current_node, open_stack, closed_stack):
                 else:
                     temp_node[i - 1][j] = 1
             except:
-                print(end = '')
+                print(end='')
 
             try:
                 if temp_node[i][j + 1] == 1:
@@ -85,7 +90,7 @@ def findChildren(current_node, open_stack, closed_stack):
                     temp_node[i][j + 1] = 1
 
             except:
-                print(end = '')
+                print(end='')
 
             try:
                 if j - 1 < 0:
@@ -95,27 +100,35 @@ def findChildren(current_node, open_stack, closed_stack):
                 else:
                     temp_node[i][j - 1] = 1
             except:
-                print(end = '')
+                print(end='')
+            actual_temp_nodes.append(Node(temp_node, current_node.depth + 1, current_node, [i, j]))
             temp_list.append(temp_node)
     temp_list.sort(reverse=True)
-    for state in temp_list:
-        if check_in_closed_stack(state, closed_stack):
-            open_stack.append(Node(state, current_node.depth + 1, current_node))
-        elif find_depth_in_list(state, current_node.depth+1, closed_stack):
-            open_stack.append(Node(state, current_node.depth + 1, current_node))
+    for i in range(len(temp_list)):
+        for j in range(len(actual_temp_nodes)):
+            if temp_list[i] == actual_temp_nodes[j].state:
+                temp_list[i] = actual_temp_nodes[j]
 
-def check_in_closed_stack(temp_node, closed_stack):
+    for node in temp_list:
+        if check_in_closed_stack(node.state, closed_stack):
+            open_stack.append(node)
+        elif find_depth_in_list(node.state, current_node.depth + 1, closed_stack):
+            open_stack.append(node)
+
+
+def check_in_closed_stack(state, closed_stack):
     for i in range(len(closed_stack)):
-        if temp_node == closed_stack[i].state:
+        if state == closed_stack[i].state:
             return False
     return True
 
-def find_depth_in_list(node, depth, closed_list):
+
+def find_depth_in_list(state, depth, closed_list):
     try:
         for i in range(len(closed_list)):
-            if node == closed_list[i].state:
+            if state == closed_list[i].state:
                 if depth < closed_list[i].depth:
-                    closed_list[i].state = node
+                    closed_list[i].state = state
                     closed_list[i].depth = depth
                     return True
     except:
@@ -128,7 +141,7 @@ def find_depth_in_list(node, depth, closed_list):
 initial_board = create_boards()
 
 # create Node object containing the state and the depth
-initial_node = Node(initial_board, 1, None)
+initial_node = Node(initial_board, 1, None, None)
 
 # initialize closed and open stack
 open_stack = []
@@ -168,7 +181,6 @@ while len(open_stack) > 0:
     print(current_node.state)
     if success(current_node.state):
         no_solution = False
-        print("break")
         print(current_node.state)
         break
 
@@ -185,10 +197,10 @@ while len(open_stack) > 0:
 
     if success(current_node.state):
         no_solution = False
-        print("break")
+        print("====== SOLUTION ======")
         print(current_node.state)
+        print(current_node.coordinates)
         break
 
 if no_solution:
     print("NO SOLUTION")
-print("D0ne")
