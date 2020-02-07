@@ -52,6 +52,7 @@ def DFS():
 
 
 def findChildren(current_node, open_stack, closed_stack):
+    temp_list = []
     for i in range(len(current_node.state)):
         for j in range(len(current_node.state)):
             temp_node = copy.deepcopy(current_node.state)
@@ -95,10 +96,13 @@ def findChildren(current_node, open_stack, closed_stack):
                     temp_node[i][j - 1] = 1
             except:
                 print(end = '')
-            if check_in_closed_stack(temp_node, closed_stack):
-                open_stack.append(Node(temp_node, current_node.depth + 1, current_node))
-            elif find_depth_in_list(temp_node, current_node.depth+1, closed_stack):
-                open_stack.append(Node(temp_node, current_node.depth + 1, current_node))
+            temp_list.append(temp_node)
+    temp_list.sort(reverse=True)
+    for state in temp_list:
+        if check_in_closed_stack(state, closed_stack):
+            open_stack.append(Node(state, current_node.depth + 1, current_node))
+        elif find_depth_in_list(state, current_node.depth+1, closed_stack):
+            open_stack.append(Node(state, current_node.depth + 1, current_node))
 
 def check_in_closed_stack(temp_node, closed_stack):
     for i in range(len(closed_stack)):
