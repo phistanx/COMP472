@@ -50,6 +50,18 @@ def success(board):
     return is_successful
 
 
+def writeSolutionFile(result_node):
+    print('PRINT TO FILE')
+    solution_path = []
+    while result_node.parent != None:
+        solution_path.append(result_node)
+        result_node = result_node.parent
+    solution_path.reverse()
+    for i in solution_path:
+        print(i.coordinates, end='')
+        print(i.state)
+
+
 def DFS():
     open_list = []
     closed_list = []
@@ -200,6 +212,7 @@ while len(open_stack) > 0:
         print("====== SOLUTION ======")
         print(current_node.state)
         print(current_node.coordinates)
+        writeSolutionFile(current_node)
         break
 
 if no_solution:
