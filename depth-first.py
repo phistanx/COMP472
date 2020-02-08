@@ -47,6 +47,16 @@ def success(board):
                 is_successful = False
     return is_successful
 
+def convertNestedListToString(nested_list):
+    string_of_list =  ",".join( repr(e) for e in nested_list)
+    string_of_list = string_of_list.replace(",", "")
+    string_of_list = string_of_list.replace("[","")
+    string_of_list = string_of_list.replace("]","")
+    string_of_list = string_of_list.replace(" ","")
+    return string_of_list
+
+def writeToSearchFile(string_of_list, search_file):
+    search_file.write("0" + " 0 " + "0 " + string_of_list+"\n")
 
 def writeSolutionFile(result_node):
     print('PRINT TO FILE')
@@ -58,14 +68,6 @@ def writeSolutionFile(result_node):
     for i in solution_path:
         print(i.coordinates, end='')
         print(i.state)
-
-def createSearchFile():
-    if Path('filename.txt').is_file():
-        print ("File exist")
-    else:
-        print ("File not exist")
-
-
 
 def DFS():
     open_list = []
@@ -132,14 +134,6 @@ def findChildren(current_node, open_stack, closed_stack):
         elif find_depth_in_list(node.state, current_node.depth + 1, closed_stack):
              open_stack.append(node)
 
-
-def writeToSearchFile(string_of_list, search_file):
-    string_of_list = string_of_list.replace(",", "")
-    string_of_list = string_of_list.replace("[","")
-    string_of_list = string_of_list.replace("]","")
-    string_of_list = string_of_list.replace(" ","")
-    search_file.write("0" + " 0 " + "0 " + string_of_list+"\n")
-
 def check_in_closed_stack(state, closed_stack):
     for i in range(len(closed_stack)):
         if state == closed_stack[i].state:
@@ -177,8 +171,7 @@ def start_dfs(initial_board, max_d, search_file):
 
     while len(open_stack) > 0:
         current_node = open_stack.pop()
-        string_of_list =  ",".join( repr(e) for e in current_node.state)
-        writeToSearchFile(string_of_list, search_file)
+        writeToSearchFile(convertNestedListToString(current_node.state), search_file)
         closed_stack.append(current_node)
         print(current_node.state)
         if success(current_node.state):
@@ -191,8 +184,7 @@ def start_dfs(initial_board, max_d, search_file):
             if len(open_stack) == 0:
                 break
             current_node = open_stack.pop()
-            string_of_list =  ",".join( repr(e) for e in current_node.state)
-            writeToSearchFile(string_of_list, search_file)
+            writeToSearchFile(convertNestedListToString(current_node.state), search_file)
             if success(current_node.state):
                 no_solution = False
                 break
