@@ -217,7 +217,9 @@ def play_game():
         search_file = open(search_file_name,"w+")
         solution_file_name = str(index) + "_dfs_solution.txt"
         solution_file = open(solution_file_name,"w+")
-        start_dfs(create_boards(line), get_maxd(line), search_file, solution_file)
+        board = create_boards(line)
+        solution_file.write("0 " + convertNestedListToString(board) + "\n")
+        start_dfs(board, get_maxd(line), search_file, solution_file)
         print("====== END GAME ======")
         print("")
    
