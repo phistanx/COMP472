@@ -1,7 +1,7 @@
 import copy
 import pickle
 from pathlib import Path
-
+import re
 
 class Node:
     state: []
@@ -133,6 +133,13 @@ def findChildren(current_node, open_stack, closed_stack):
              open_stack.append(node)
 
 
+def writeToSearchFile(string_of_list, search_file):
+    string_of_list = string_of_list.replace(",", "")
+    string_of_list = string_of_list.replace("[","")
+    string_of_list = string_of_list.replace("]","")
+    string_of_list = string_of_list.replace(" ","")
+    search_file.write("0" + " 0 " + "0 " + string_of_list+"\n")
+
 def check_in_closed_stack(state, closed_stack):
     for i in range(len(closed_stack)):
         if state == closed_stack[i].state:
@@ -151,43 +158,7 @@ def find_depth_in_list(state, depth, closed_list):
     except:
         print('error')
 
-
-# print(create_boards())
-
-# # create Node object containing the state and the depth
-# initial_node = Node(initial_board, 1, None, None)
-
-# # initialize closed and open stack
-# open_stack = []
-# closed_stack = []
-
-# # dummy max depth for now
-# max_d = get_maxd()
-
-# # adding initial node to the stack
-# open_stack.append(initial_node)
-
-# popping the stack
-# current_node = open_stack.pop()
-
-# adding the first pop to the closed stack
-# closed_stack.append(current_node)
-
-# find the children of the current node that was popped from the open stack
-# findChildren(current_node, open_stack, closed_stack)
-# print(open_stack)
-
-# pop the next node at the top of the stack
-# current_node = open_stack.pop()
-
-# rinse and repeat
-# closed_stack.append(current_node)
-# findChildren(current_node, open_stack, closed_stack)
-# print(open_stack)
-
-# NEW LOGIC TO BE IMPLEMENTED WITH LOOPS
-
-def start_dfs(initial_board, max_d):
+def start_dfs(initial_board, max_d, search_file):
 
     # create Node object containing the state and the depth
     initial_node = Node(initial_board, 1, None, None)
@@ -206,6 +177,8 @@ def start_dfs(initial_board, max_d):
 
     while len(open_stack) > 0:
         current_node = open_stack.pop()
+        string_of_list =  ",".join( repr(e) for e in current_node.state)
+        writeToSearchFile(string_of_list, search_file)
         closed_stack.append(current_node)
         print(current_node.state)
         if success(current_node.state):
@@ -218,6 +191,8 @@ def start_dfs(initial_board, max_d):
             if len(open_stack) == 0:
                 break
             current_node = open_stack.pop()
+            string_of_list =  ",".join( repr(e) for e in current_node.state)
+            writeToSearchFile(string_of_list, search_file)
             if success(current_node.state):
                 no_solution = False
                 break
@@ -237,9 +212,11 @@ def start_dfs(initial_board, max_d):
         
 def play_game():
     file = open("input-text/initial.txt", "r")
-    for line in file:
+    for index, line in enumerate(file):
         print("====== START GAME ======")
-        start_dfs(create_boards(line), get_maxd(line))
+        search_file_name = str(index) + "_dfs_search.txt"
+        search_file = open(search_file_name,"w+")
+        start_dfs(create_boards(line), get_maxd(line), search_file)
         print("====== END GAME ======")
         print("")
 
