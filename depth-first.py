@@ -211,6 +211,7 @@ def start_dfs(initial_board, max_d, search_file, solution_file):
             break
 
     if no_solution:
+        solution_file.write("No solution")
         print("NO SOLUTION")
         
 def play_game():
