@@ -59,8 +59,9 @@ def convertNestedListToString(nested_list):
 def writeToSearchFile(string_of_list, search_file):
     search_file.write("0" + " 0 " + "0 " + string_of_list+"\n")
 
-def writeSolutionFile(result_node, solution_file):
+def writeSolutionFile(result_node, solution_file, initial_board):
     print('PRINT TO FILE')
+    solution_file.write('0 ' + convertNestedListToString(initial_board) + "\n")
     solution_path = []
     while result_node.parent != None:
         solution_path.append(result_node)
@@ -183,7 +184,10 @@ def start_dfs(initial_board, max_d, search_file, solution_file):
         print(current_node.state)
         if success(current_node.state):
             no_solution = False
+            print("====== SOLUTION ======")
             print(current_node.state)
+            print(current_node.coordinates)
+            writeSolutionFile(current_node, solution_file, initial_board)
             break
 
         while max_d > current_node.depth:
@@ -203,7 +207,7 @@ def start_dfs(initial_board, max_d, search_file, solution_file):
             print("====== SOLUTION ======")
             print(current_node.state)
             print(current_node.coordinates)
-            writeSolutionFile(current_node,solution_file)
+            writeSolutionFile(current_node,solution_file, initial_board)
             break
 
     if no_solution:
