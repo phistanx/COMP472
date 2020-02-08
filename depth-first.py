@@ -16,16 +16,12 @@ class Node:
         self.coordinates = coordinates
 
 
-def get_maxd():
-    f = open("input-text/initial.txt", "r")
-    contents = f.read()
+def get_maxd(contents):
     x = contents.split()
     return int(x[1])
 
 
-def create_boards():
-    f = open("input-text/initial.txt", "r")
-    contents = f.read()
+def create_boards(contents):
     x = contents.split()
     size = x[0]
     max_d = x[1]
@@ -158,21 +154,18 @@ def find_depth_in_list(state, depth, closed_list):
 
 # print(create_boards())
 
-# get initial board
-initial_board = create_boards()
+# # create Node object containing the state and the depth
+# initial_node = Node(initial_board, 1, None, None)
 
-# create Node object containing the state and the depth
-initial_node = Node(initial_board, 1, None, None)
+# # initialize closed and open stack
+# open_stack = []
+# closed_stack = []
 
-# initialize closed and open stack
-open_stack = []
-closed_stack = []
+# # dummy max depth for now
+# max_d = get_maxd()
 
-# dummy max depth for now
-max_d = get_maxd()
-
-# adding initial node to the stack
-open_stack.append(initial_node)
+# # adding initial node to the stack
+# open_stack.append(initial_node)
 
 # popping the stack
 # current_node = open_stack.pop()
@@ -194,35 +187,61 @@ open_stack.append(initial_node)
 
 # NEW LOGIC TO BE IMPLEMENTED WITH LOOPS
 
-no_solution = True
+def start_dfs(initial_board, max_d):
 
-while len(open_stack) > 0:
-    current_node = open_stack.pop()
-    closed_stack.append(current_node)
-    print(current_node.state)
-    if success(current_node.state):
-        no_solution = False
-        print(current_node.state)
-        break
+    # create Node object containing the state and the depth
+    initial_node = Node(initial_board, 1, None, None)
 
-    while max_d > current_node.depth:
-        findChildren(current_node, open_stack, closed_stack)
-        if len(open_stack) == 0:
-            break
+    # initialize closed and open stack
+    open_stack = []
+    closed_stack = []
+
+    print("MAX D")
+    print(max_d)
+    # adding initial node to the stack
+    open_stack.append(initial_node)
+
+
+    no_solution = True
+
+    while len(open_stack) > 0:
         current_node = open_stack.pop()
-        if success(current_node.state):
-            no_solution = False
-            break
         closed_stack.append(current_node)
         print(current_node.state)
+        if success(current_node.state):
+            no_solution = False
+            print(current_node.state)
+            break
 
-    if success(current_node.state):
-        no_solution = False
-        print("====== SOLUTION ======")
-        print(current_node.state)
-        print(current_node.coordinates)
-        writeSolutionFile(current_node)
-        break
+        while max_d > current_node.depth:
+            findChildren(current_node, open_stack, closed_stack)
+            if len(open_stack) == 0:
+                break
+            current_node = open_stack.pop()
+            if success(current_node.state):
+                no_solution = False
+                break
+            closed_stack.append(current_node)
+            print(current_node.state)
 
-if no_solution:
-    print("NO SOLUTION")
+        if success(current_node.state):
+            no_solution = False
+            print("====== SOLUTION ======")
+            print(current_node.state)
+            print(current_node.coordinates)
+            writeSolutionFile(current_node)
+            break
+
+    if no_solution:
+        print("NO SOLUTION")
+        
+def play_game():
+    file = open("input-text/initial.txt", "r")
+    for line in file:
+        print("====== START GAME ======")
+        start_dfs(create_boards(line), get_maxd(line))
+        print("====== END GAME ======")
+        print("")
+
+
+play_game()    
