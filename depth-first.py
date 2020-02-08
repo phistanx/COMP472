@@ -1,6 +1,6 @@
 import copy
 import pickle
-import ujson
+from pathlib import Path
 
 
 class Node:
@@ -63,6 +63,13 @@ def writeSolutionFile(result_node):
         print(i.coordinates, end='')
         print(i.state)
 
+def createSearchFile():
+    if Path('filename.txt').is_file():
+        print ("File exist")
+    else:
+        print ("File not exist")
+
+
 
 def DFS():
     open_list = []
@@ -74,8 +81,7 @@ def findChildren(current_node, open_stack, closed_stack):
     actual_temp_nodes = []
     for i in range(len(current_node.state)):
         for j in range(len(current_node.state)):
-            # temp_node = pickle.loads(pickle.dumps(current_node.state, -1))
-            temp_node = ujson.loads(ujson.dumps(current_node.state))
+            temp_node = pickle.loads(pickle.dumps(current_node.state, -1))
             if temp_node[i][j] == 1:
                 temp_node[i][j] = 0
             else:
@@ -127,8 +133,8 @@ def findChildren(current_node, open_stack, closed_stack):
     for node in temp_list:
         if check_in_closed_stack(node.state, closed_stack):
             open_stack.append(node)
-        # elif find_depth_in_list(node.state, current_node.depth + 1, closed_stack):
-        #     open_stack.append(node)
+        elif find_depth_in_list(node.state, current_node.depth + 1, closed_stack):
+             open_stack.append(node)
 
 
 def check_in_closed_stack(state, closed_stack):
@@ -147,7 +153,7 @@ def find_depth_in_list(state, depth, closed_list):
                     closed_list[i].depth = depth
                     return True
     except:
-        print('bruh')
+        print('error')
 
 
 # print(create_boards())
