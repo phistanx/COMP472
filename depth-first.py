@@ -53,12 +53,13 @@ def convertNestedListToString(nested_list):
     string_of_list = string_of_list.replace("[","")
     string_of_list = string_of_list.replace("]","")
     string_of_list = string_of_list.replace(" ","")
+    string_of_list = string_of_list.replace("'","")
     return string_of_list
 
 def writeToSearchFile(string_of_list, search_file):
     search_file.write("0" + " 0 " + "0 " + string_of_list+"\n")
 
-def writeSolutionFile(result_node):
+def writeSolutionFile(result_node, solution_file):
     print('PRINT TO FILE')
     solution_path = []
     while result_node.parent != None:
@@ -66,13 +67,20 @@ def writeSolutionFile(result_node):
         result_node = result_node.parent
     solution_path.reverse()
     for i in solution_path:
-        print(i.coordinates, end='')
-        print(i.state)
+        coordinate = convertNestedListToString(convert_coordinate(i.coordinates))
+        state = convertNestedListToString(i.state)
+        solution_file.write(coordinate + " " + state + "\n")
+        print(coordinate, end=' ')
+        print(state)
+ 
+def convert_coordinate(coordinate):
+    number = coordinate[0] + 65
+    coordinate[0] = chr(number)
+    return coordinate        
 
 def DFS():
     open_list = []
     closed_list = []
-
 
 def findChildren(current_node, open_stack, closed_stack):
     temp_list = []
@@ -120,7 +128,7 @@ def findChildren(current_node, open_stack, closed_stack):
                     temp_node[i][j - 1] = 1
             except:
                 print(end='')
-            actual_temp_nodes.append(Node(temp_node, current_node.depth + 1, current_node, [i, j]))
+            actual_temp_nodes.append(Node(temp_node, current_node.depth + 1, current_node, [i, j+1]))
             temp_list.append(temp_node)
     temp_list.sort(reverse=True)
     for i in range(len(temp_list)):
@@ -152,7 +160,7 @@ def find_depth_in_list(state, depth, closed_list):
     except:
         print('error')
 
-def start_dfs(initial_board, max_d, search_file):
+def start_dfs(initial_board, max_d, search_file, solution_file):
 
     # create Node object containing the state and the depth
     initial_node = Node(initial_board, 1, None, None)
@@ -165,7 +173,6 @@ def start_dfs(initial_board, max_d, search_file):
     print(max_d)
     # adding initial node to the stack
     open_stack.append(initial_node)
-
 
     no_solution = True
 
@@ -196,7 +203,7 @@ def start_dfs(initial_board, max_d, search_file):
             print("====== SOLUTION ======")
             print(current_node.state)
             print(current_node.coordinates)
-            writeSolutionFile(current_node)
+            writeSolutionFile(current_node,solution_file)
             break
 
     if no_solution:
@@ -208,9 +215,10 @@ def play_game():
         print("====== START GAME ======")
         search_file_name = str(index) + "_dfs_search.txt"
         search_file = open(search_file_name,"w+")
-        start_dfs(create_boards(line), get_maxd(line), search_file)
+        solution_file_name = str(index) + "_dfs_solution.txt"
+        solution_file = open(solution_file_name,"w+")
+        start_dfs(create_boards(line), get_maxd(line), search_file, solution_file)
         print("====== END GAME ======")
         print("")
-
-
+   
 play_game()    
