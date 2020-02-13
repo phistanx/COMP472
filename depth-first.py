@@ -2,7 +2,7 @@ import copy
 import pickle
 from pathlib import Path
 import re 
-import functions
+import shared_functions
 
 class Node:
     state: []
@@ -24,7 +24,7 @@ def play_game():
         search_file = open(search_file_name,"w+")
         solution_file_name = str(index) + "_dfs_solution.txt"
         solution_file = open(solution_file_name,"w+")
-        board = functions.create_boards(line)
+        board = shared_functions.create_boards(line)
         start_dfs(board, get_maxd(line), search_file, solution_file)
         print("====== END GAME ======")
         print("")
@@ -52,15 +52,15 @@ def start_dfs(initial_board, max_d, search_file, solution_file):
     while len(open_stack) > 0:
         current_node = open_stack.pop()
         # add the current node to the search file and append it to the closed stack
-        functions.writeToSearchFile(functions.convertNestedListToString(current_node.state), search_file)
+        shared_functions.writeToSearchFile(shared_functions.convertNestedListToString(current_node.state), search_file)
         closed_stack.append(current_node)
         print(current_node.state)
-        if functions.success(current_node.state):
+        if shared_functions.success(current_node.state):
             no_solution = False
             print("====== SOLUTION ======")
             print(current_node.state)
             print(current_node.coordinates)
-            functions.writeSolutionFile(current_node, solution_file, initial_board)
+            shared_functions.writeSolutionFile(current_node, solution_file, initial_board)
             break
 
         while max_d > current_node.depth:
@@ -68,19 +68,19 @@ def start_dfs(initial_board, max_d, search_file, solution_file):
             if len(open_stack) == 0:
                 break
             current_node = open_stack.pop()
-            functions.writeToSearchFile(functions.convertNestedListToString(current_node.state), search_file)
-            if functions.success(current_node.state):
+            shared_functions.writeToSearchFile(shared_functions.convertNestedListToString(current_node.state), search_file)
+            if shared_functions.success(current_node.state):
                 no_solution = False
                 break
             closed_stack.append(current_node)
             print(current_node.state)
 
-        if functions.success(current_node.state):
+        if shared_functions.success(current_node.state):
             no_solution = False
             print("====== SOLUTION ======")
             print(current_node.state)
             print(current_node.coordinates)
-            functions.writeSolutionFile(current_node,solution_file, initial_board)
+            shared_functions.writeSolutionFile(current_node,solution_file, initial_board)
             break
 
     if no_solution:
@@ -154,7 +154,7 @@ def findChildren(current_node, open_stack, closed_stack):
 
     # compare each node in the list to check if it should go to the open_stack or not
     for node in temp_list:
-        if functions.check_in_closed_stack(node.state, closed_stack):
+        if shared_functions.check_in_closed_stack(node.state, closed_stack):
             open_stack.append(node)
         elif find_depth_in_list(node.state, current_node.depth + 1, closed_stack):
              open_stack.append(node)
