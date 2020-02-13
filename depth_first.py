@@ -169,5 +169,3 @@ def find_depth_in_list(state, depth, closed_list):
                     return True
     except:
         print('error')
-
-play_game()    
