@@ -57,6 +57,10 @@ def success(board):
                 is_successful = False
     return is_successful    
 
+def get_maxl(contents):
+    x = contents.split()
+    return int(x[2])
+
 def check_in_closed_stack(state, closed_stack):
     for i in range(len(closed_stack)):
         if state == closed_stack[i].state:
