@@ -1,8 +1,9 @@
 import copy
 import pickle
 from pathlib import Path
-import re 
+import re
 import shared_functions
+
 
 class Node:
     state: []
@@ -16,25 +17,27 @@ class Node:
         self.parent = parent
         self.coordinates = coordinates
 
+
 def play_game():
     file = open("input-text/initial.txt", "r")
     for index, line in enumerate(file):
         print("====== START GAME ======")
-        search_file_name = str(index) + "_dfs_search.txt"
-        search_file = open(search_file_name,"w+")
-        solution_file_name = str(index) + "_dfs_solution.txt"
-        solution_file = open(solution_file_name,"w+")
+        search_file_name = "dfs-output/" + str(index) + "_dfs_search.txt"
+        search_file = open(search_file_name, "w+")
+        solution_file_name = "dfs-output/" + str(index) + "_dfs_search.txt"
+        solution_file = open(solution_file_name, "w+")
         board = shared_functions.create_boards(line)
         start_dfs(board, get_maxd(line), search_file, solution_file)
         print("====== END GAME ======")
         print("")
 
+
 def get_maxd(contents):
     x = contents.split()
     return int(x[1])
-   
-def start_dfs(initial_board, max_d, search_file, solution_file):
 
+
+def start_dfs(initial_board, max_d, search_file, solution_file):
     # create Node object containing the state and the depth
     initial_node = Node(initial_board, 1, None, None)
 
@@ -68,7 +71,8 @@ def start_dfs(initial_board, max_d, search_file, solution_file):
             if len(open_stack) == 0:
                 break
             current_node = open_stack.pop()
-            shared_functions.writeToSearchFile(shared_functions.convertNestedListToString(current_node.state), search_file)
+            shared_functions.writeToSearchFile(shared_functions.convertNestedListToString(current_node.state),
+                                               search_file)
             if shared_functions.success(current_node.state):
                 no_solution = False
                 break
@@ -80,12 +84,13 @@ def start_dfs(initial_board, max_d, search_file, solution_file):
             print("====== SOLUTION ======")
             print(current_node.state)
             print(current_node.coordinates)
-            shared_functions.writeSolutionFile(current_node,solution_file, initial_board)
+            shared_functions.writeSolutionFile(current_node, solution_file, initial_board)
             break
 
     if no_solution:
         solution_file.write("No solution")
         print("NO SOLUTION")
+
 
 def findChildren(current_node, open_stack, closed_stack):
     temp_list = []
@@ -138,7 +143,7 @@ def findChildren(current_node, open_stack, closed_stack):
             except:
                 print(end='')
             # we create a Node object containing the values and add it to the list
-            actual_temp_nodes.append(Node(temp_node, current_node.depth + 1, current_node, [i, j+1]))
+            actual_temp_nodes.append(Node(temp_node, current_node.depth + 1, current_node, [i, j + 1]))
 
             # a list containing only the multiple BOARD STATE
             temp_list.append(temp_node)
@@ -157,7 +162,8 @@ def findChildren(current_node, open_stack, closed_stack):
         if shared_functions.check_in_closed_stack(node.state, closed_stack):
             open_stack.append(node)
         elif find_depth_in_list(node.state, current_node.depth + 1, closed_stack):
-             open_stack.append(node)
+            open_stack.append(node)
+
 
 def find_depth_in_list(state, depth, closed_list):
     try:

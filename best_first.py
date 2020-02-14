@@ -24,9 +24,9 @@ def play_game():
     file = open("input-text/initial.txt", "r")
     for index, line in enumerate(file):
         print("====== START GAME ======")
-        search_file_name = str(index) + "_bfs_search.txt"
+        search_file_name = "bfs-output/" + str(index) + "_bfs_search.txt"
         search_file = open(search_file_name, "w+")
-        solution_file_name = str(index) + "_bfs_solution.txt"
+        solution_file_name = "bfs-output/" + str(index) + "_bfs_solution.txt"
         solution_file = open(solution_file_name, "w+")
         board = shared_functions.create_boards(line)
         start_dfs(board, shared_functions.get_maxl(line), search_file, solution_file)
@@ -148,23 +148,88 @@ def findChildren(current_node, open_stack, closed_stack):
             # we create a Node object containing the values and add it to the list
             actual_temp_nodes.append(Node(temp_node, current_node.depth + 1, current_node, [i, j + 1], 0))
 
-            heuristic(actual_temp_nodes)
+    find_heuristic(actual_temp_nodes)
 
     # sort so it enters the stack properly
-    actual_temp_nodes.sort(key=lambda x: x.heuristic)
+    # ctual_temp_nodes.sort(key=lambda x: x.heuristic)
 
     # compare each node in the list to check if it should go to the open_stack or not
     for node in actual_temp_nodes:
         if shared_functions.check_in_closed_stack(node.state, closed_stack):
             open_stack.append(node)
+    open_stack.sort(key=lambda x: x.heuristic)
 
 
-def heuristic(list_nodes):
+def count_number_of_ones(node):
+    count = 0;
+    for i in node.state:
+        for j in i:
+            if j == 1:
+                count += 1
+    return count;
+
+
+def find_adjacent_ones(node):
+    real_counter = 0
+    for i in range(len(node.state)):
+        for j in range(len(node.state)):
+            counter = 0
+            # make a deep copy to not have reference
+            temp_node = node.state
+            # change the current index to 0/1
+            if temp_node[i][j] == 1:
+                counter += 1
+            # try changing all the nodes next to the current one to 0/1
+            try:
+                if temp_node[i + 1][j] == 1:
+                    counter += 1
+            except:
+                print(end='')
+            # if index array is negative, we want to throw an exception, it shows that the tile is outside of the board
+            try:
+                if i - 1 < 0:
+                    raise Exception('Index array is negative')
+                if temp_node[i - 1][j] == 1:
+                    counter += 1
+            except:
+                print(end='')
+
+            try:
+                if temp_node[i][j + 1] == 1:
+                    counter += 1
+            except:
+                print(end='')
+
+            try:
+                if j - 1 < 0:
+                    raise Exception('Index array is negative')
+                if temp_node[i][j - 1] == 1:
+                    counter += 1
+            except:
+                print(end='')
+            if real_counter < counter:
+                real_counter = counter
+
+    if real_counter == 5:
+        return 1
+    elif real_counter == 4:
+        return 1
+    elif real_counter == 3:
+        return 1
+    elif real_counter == 2:
+        return 2
+    elif real_counter == 1:
+        return 3
+
+
+def find_heuristic(list_nodes):
     for node in list_nodes:
-        for i in node.state:
-            for j in i:
-                if j == 1:
-                    node.heuristic += 1
+        if count_number_of_ones(node) == 1:
+            node.heuristic = 100
+        elif count_number_of_ones(node) == 2:
+            node.heuristic = 99
+        elif count_number_of_ones(node) >= 3:
+            node.heuristic = find_adjacent_ones(node)
 
 
 play_game()
