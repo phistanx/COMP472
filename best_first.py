@@ -22,12 +22,12 @@ def play_game():
     file = open("input-text/initial.txt", "r")
     for index, line in enumerate(file):
         print("====== START GAME ======")
-        search_file_name = str(index) + "_dfs_search.txt"
+        search_file_name = str(index) + "_bfs_search.txt"
         search_file = open(search_file_name,"w+")
-        solution_file_name = str(index) + "_dfs_solution.txt"
+        solution_file_name = str(index) + "_bfs_solution.txt"
         solution_file = open(solution_file_name,"w+")
         board = shared_functions.create_boards(line)
-        start_dfs(board, get_maxd(line), search_file, solution_file)
+        start_dfs(board, shared_functions.get_maxl(line), search_file, solution_file)
         print("====== END GAME ======")
         print("")
 
@@ -35,7 +35,7 @@ def get_maxd(contents):
     x = contents.split()
     return int(x[1])
    
-def start_dfs(initial_board, max_d, search_file, solution_file):
+def start_dfs(initial_board, max_l, search_file, solution_file):
 
     # create Node object containing the state and the depth
     initial_node = Node(initial_board, 1, None, None,0)
@@ -45,7 +45,7 @@ def start_dfs(initial_board, max_d, search_file, solution_file):
     closed_stack = []
 
     print("MAX D")
-    print(max_d)
+    print(max_l)
     # adding initial node to the stack
     open_stack.append(initial_node)
 
@@ -65,7 +65,7 @@ def start_dfs(initial_board, max_d, search_file, solution_file):
             shared_functions.writeSolutionFile(current_node, solution_file, initial_board)
             break
 
-        while max_d > current_node.depth:
+        while max_l > len(closed_stack):
             findChildren(current_node, open_stack, closed_stack)
             if len(open_stack) == 0:
                 break
@@ -95,6 +95,7 @@ def findChildren(current_node, open_stack, closed_stack):
     # iterate through the board
     for i in range(len(current_node.state)):
         for j in range(len(current_node.state)):
+            heuristic = 0
             # make a deep copy to not have reference
             temp_node = pickle.loads(pickle.dumps(current_node.state, -1))
             # change the current index to 0/1
@@ -143,7 +144,7 @@ def findChildren(current_node, open_stack, closed_stack):
             actual_temp_nodes.append(Node(temp_node, current_node.depth + 1, current_node, [i, j+1],0))
 
             heuristic(actual_temp_nodes)
- 
+
     # sort so it enters the stack properly
     actual_temp_nodes.sort(key=lambda x: x.heuristic)
 
@@ -151,6 +152,7 @@ def findChildren(current_node, open_stack, closed_stack):
     for node in actual_temp_nodes:
         if shared_functions.check_in_closed_stack(node.state, closed_stack):
             open_stack.append(node)      
+
 
 def find_depth_in_list(state, depth, closed_list):
     try:
