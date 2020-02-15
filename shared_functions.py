@@ -16,8 +16,8 @@ def create_boards(contents):
         board.append(rows)
     return board
 
-def writeToSearchFile(string_of_list, search_file):
-    search_file.write("0" + " 0 " + "0 " + string_of_list+"\n")
+def writeToSearchFile(string_of_list, search_file, h):
+    search_file.write("0" + " 0 " + str(h) + " " + string_of_list+"\n")
 
 def writeSolutionFile(result_node, solution_file, initial_board):
     print('PRINT TO FILE')

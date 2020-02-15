@@ -57,7 +57,7 @@ def start_dfs(initial_board, max_l, search_file, solution_file):
     while len(open_stack) > 0:
         current_node = open_stack.pop(0)
         # add the current node to the search file and append it to the closed stack
-        shared_functions.writeToSearchFile(shared_functions.convertNestedListToString(current_node.state), search_file)
+        shared_functions.writeToSearchFile(shared_functions.convertNestedListToString(current_node.state), search_file, current_node.heuristic)
         closed_stack.append(current_node)
         print(current_node.state)
         if shared_functions.success(current_node.state):
@@ -74,7 +74,7 @@ def start_dfs(initial_board, max_l, search_file, solution_file):
                 break
             current_node = open_stack.pop(0)
             shared_functions.writeToSearchFile(shared_functions.convertNestedListToString(current_node.state),
-                                               search_file)
+                                               search_file, current_node.heuristic)
             if shared_functions.success(current_node.state):
                 no_solution = False
                 break
@@ -219,13 +219,13 @@ def find_adjacent_ones(node):
     if real_counter == 5:
         return 1
     elif real_counter == 4:
-        return 1
-    elif real_counter == 3:
-        return 1
-    elif real_counter == 2:
         return 2
-    elif real_counter == 1:
+    elif real_counter == 3:
         return 3
+    elif real_counter == 2:
+        return 4
+    elif real_counter == 1:
+        return 5
 
 
 def find_heuristic(list_nodes):
