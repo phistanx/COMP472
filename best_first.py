@@ -159,6 +159,12 @@ def findChildren(current_node, open_stack, closed_stack):
             open_stack.append(node)
     open_stack.sort(key=lambda x: x.heuristic)
 
+    for i in range(len(open_stack)):
+        for j in range(0, len(open_stack) - i - 1):
+            if open_stack[j].heuristic == open_stack[j + 1].heuristic:
+                if open_stack[j].state > open_stack[j + 1].state:
+                    open_stack[j], open_stack[j + 1] = open_stack[j + 1], open_stack[j]
+
 
 def count_number_of_ones(node):
     count = 0;
