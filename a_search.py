@@ -24,9 +24,9 @@ def play_game():
     file = open("input-text/initial.txt", "r")
     for index, line in enumerate(file):
         print("====== START GAME ======")
-        search_file_name = "bfs-output/" + str(index) + "_bfs_search.txt"
+        search_file_name = "a-output/" + str(index) + "_a_search.txt"
         search_file = open(search_file_name, "w+")
-        solution_file_name = "bfs-output/" + str(index) + "_bfs_solution.txt"
+        solution_file_name = "a-output/" + str(index) + "_a_solution.txt"
         solution_file = open(solution_file_name, "w+")
         board = shared_functions.create_boards(line)
         start_dfs(board, shared_functions.get_maxl(line), search_file, solution_file)
@@ -46,7 +46,7 @@ def start_dfs(initial_board, max_l, search_file, solution_file):
     # initialize closed and open stack
     open_stack = []
     closed_stack = []
-
+    temp_open_stack = []
     print("MAX D")
     print(max_l)
     # adding initial node to the stack
@@ -57,7 +57,7 @@ def start_dfs(initial_board, max_l, search_file, solution_file):
     while len(open_stack) > 0 and max_l > len(closed_stack):
         current_node = open_stack.pop(0)
         # add the current node to the search file and append it to the closed stack
-        shared_functions.writeToSearchFile(shared_functions.convertNestedListToString(current_node.state), search_file, current_node.heuristic)
+        writeToSearchFile(shared_functions.convertNestedListToString(current_node.state), search_file, current_node.heuristic - current_node.depth, current_node.depth, current_node.heuristic)
         closed_stack.append(current_node)
         print(current_node.state)
         if shared_functions.success(current_node.state):
@@ -69,12 +69,12 @@ def start_dfs(initial_board, max_l, search_file, solution_file):
             break
 
         while max_l > len(closed_stack):
-            findChildren(current_node, open_stack, closed_stack)
+            findChildren(current_node, open_stack, closed_stack,temp_open_stack)
             if len(open_stack) == 0:
                 break
             current_node = open_stack.pop(0)
-            shared_functions.writeToSearchFile(shared_functions.convertNestedListToString(current_node.state),
-                                               search_file, current_node.heuristic)
+            writeToSearchFile(shared_functions.convertNestedListToString(current_node.state),
+                                               search_file, current_node.heuristic - current_node.depth, current_node.depth, current_node.heuristic)
             if shared_functions.success(current_node.state):
                 no_solution = False
                 break
@@ -94,7 +94,7 @@ def start_dfs(initial_board, max_l, search_file, solution_file):
         print("NO SOLUTION")
 
 
-def findChildren(current_node, open_stack, closed_stack):
+def findChildren(current_node, open_stack, closed_stack, temp_open_stack):
     temp_list = []
     actual_temp_nodes = []
     # iterate through the board
@@ -157,6 +157,8 @@ def findChildren(current_node, open_stack, closed_stack):
     for node in actual_temp_nodes:
         if shared_functions.check_in_closed_stack(node.state, closed_stack) and shared_functions.check_in_open_stack(node.state, open_stack):
             open_stack.append(node)
+            temp_open_stack.append(node.state)
+    temp_open_stack.sort()
     open_stack.sort(key=lambda x: x.heuristic)
 
     for i in range(len(open_stack)):
@@ -235,7 +237,12 @@ def find_heuristic(list_nodes):
         elif count_number_of_ones(node) == 2:
             node.heuristic = 99
         elif count_number_of_ones(node) >= 3:
-            node.heuristic = find_adjacent_ones(node)
+            node.heuristic = find_adjacent_ones(node) + node.depth
 
+def writeToSearchFile(string_of_list, search_file, h, g, f):
+    if h < 0:
+        search_file.write(str(f) + " " + str(g) + " " + str(0) + " " + string_of_list + "\n")
+    else:
+        search_file.write(str(f) + " " + str(g) + " " + str(h) + " " + string_of_list+"\n")
 
 play_game()

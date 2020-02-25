@@ -66,3 +66,11 @@ def check_in_closed_stack(state, closed_stack):
         if state == closed_stack[i].state:
             return False
     return True
+
+def check_in_open_stack(state, open_stack):
+    for i in range(len(open_stack)):
+        if state == open_stack[i].state:
+            return False
+    return True
+
+
